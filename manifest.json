@@ -1,0 +1,13 @@
+{
+    "name": "testplugin",
+    "icon": "icon.png",
+    "version": "1.0",
+    "description": "测试插件",
+    "author": "test",
+    "website": "no.thankyou",
+    "entry": "main.js",
+    "api_level": 1,
+    "permissions": [
+        "lifecycle"
+    ]
+}

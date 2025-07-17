@@ -1,0 +1,17 @@
+{
+  "name": "astrobox-plugin-template",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rspack build"
+  },
+  "devDependencies": {
+    "@rspack/cli": "^1.4.6",
+    "@rspack/core": "^1.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "astrobox-plugin-sdk": "^1.1.3"
+  }
+}
