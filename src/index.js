@@ -47,7 +47,7 @@ AstroBox.lifecycle.onLoad(() => {
       disabled: false,
       content: {
         type: "Text",
-        value: `注意：请你在手环上退出澄序课程表，以保证此插件能与应用正常通信`,
+        value: `注意：请你先在手环上退出澄序课程表，以保证此插件能与应用正常通信`,
       },
     }
   ];
@@ -72,35 +72,30 @@ async function onPick() {
     file = await AstroBox.filesystem.pickFile({
       decode_text: true,
     })
-    console.log("file",file)
   } catch (error) {
     console.error(error)
     ui[2].content.value = error.message
     AstroBox.ui.updatePluginSettingsUI(ui)
   }
-  console.log("goon1")
-  console.log("file.path",file.path)
 
   if (!file.path.endsWith(".json")) {
     ui[2].content.value = "请选择.json文件";
     AstroBox.ui.updatePluginSettingsUI(ui);
     return;
   }
-  console.log("goon2")
 
   courseData = await AstroBox.filesystem.readFile(file.path, {
     len: file.text_len,
     decode_text: true
   });
-  console.log("courseData",courseData)
-  ui[2].content.value = `已选择文件 ${getFileName(file.path)}, 请在手环上重新打开澄序课程表，进入数据接收状态`
+  ui[2].content.value = `已选择文件 ${getFileName(file.path)}, 现在请你在手环上重新打开澄序课程表，进入数据接收状态`
+  ui[3].content.value = ``
   ui[1].disabled = false
   AstroBox.ui.updatePluginSettingsUI(ui)
 }
 
 // 数据传输
 async function ICSend() {
-  console.log("通了吗2",courseData)
 
   if (!courseData) {
     ui[2].content.value = "请先加载配置";
@@ -108,20 +103,19 @@ async function ICSend() {
     return;
   }
 
-  const data = await courseData; // 获取Promise的实际值
-  await AstroBox.interconnect.sendQAICMessage(
-    "com.waterflames.clartime",
-    JSON.stringify(data)
-  );
-  console.log("通了吗3",courseData)
-
   try {
-    console.log("开 try 了吗",courseData)
+    const appList = await AstroBox.thirdpartyapp.getThirdPartyAppList()
+    const app = appList.find(app=>app.package_name=="com.waterflames.clartime")
+    if (!app) {
+      ui[2].content.value = "请先安装澄序课程表快应用";
+      AstroBox.ui.updatePluginSettingsUI(ui);
+      return;
+    }
+
     await AstroBox.interconnect.sendQAICMessage(
       "com.waterflames.clartime",
       JSON.stringify(courseData)
     );
-    console.log("try完了吗",courseData)
     ui[2].content.value = "发送成功"
     AstroBox.ui.updatePluginSettingsUI(ui)
   } catch (error) {
