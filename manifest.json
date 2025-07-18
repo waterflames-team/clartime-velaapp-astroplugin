@@ -8,6 +8,6 @@
     "entry": "main.js",
     "api_level": 1,
     "permissions": [
-        "lifecycle","interconnect","ui","native","thirdpartyapp"
+        "lifecycle","interconnect","ui","native","thirdpartyapp","filesystem"
     ]
 }

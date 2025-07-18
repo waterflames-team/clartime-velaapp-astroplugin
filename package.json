@@ -12,6 +12,6 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "astrobox-plugin-sdk": "^1.1.3"
+    "astrobox-plugin-sdk": "^1.1.4"
   }
 }
