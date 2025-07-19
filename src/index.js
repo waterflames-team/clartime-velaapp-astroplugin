@@ -114,7 +114,7 @@ async function ICSend() {
 
     await AstroBox.interconnect.sendQAICMessage(
       "com.waterflames.clartime",
-      JSON.stringify(courseData)
+      JSON.stringify(JSON.parse(courseData))
     );
     ui[2].content.value = "发送成功"
     AstroBox.ui.updatePluginSettingsUI(ui)
