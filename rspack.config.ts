@@ -5,6 +5,7 @@ import { rspack } from "@rspack/core";
 const targets = ["last 2 versions", "> 0.2%",  "not dead",  "Firefox ESR"];
 
 export default defineConfig({
+	devtool: false,
 	entry: {
 		main: "./src/index.js"
 	},
