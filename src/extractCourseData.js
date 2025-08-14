@@ -3,8 +3,6 @@
  * 功能：读取指定课表文件，提取课程表基本数据和课程列表
  * 使用数组逻辑而非正则表达式提取数据
  */
-const fs = require('fs');
-const path = require('path');
 
 /**
  * 格式化日期为yyMMdd格式
@@ -39,13 +37,13 @@ function addWeeksToDate(dateStr, weeks) {
 
 /**
  * 主函数
- * @param {string} sourceFilePath - 源文件路径
- * @param {string} outputFilePath - 输出文件路径
+ * @param {string} fileContentInput - 源文件内容
+ * @returns {object} 提取后的课程数据对象
  */
-function extractCourseData(sourceFilePath, outputFilePath) {
+function extractCourseData(fileContentInput) {
   try {
     // 读取源文件内容
-    const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
+    const fileContent = fileContentInput
     
     // 使用正则表达式分割多部分JSON
     let data = {};
@@ -351,35 +349,15 @@ function extractCourseData(sourceFilePath, outputFilePath) {
       };
       
       // 写入输出文件
-      fs.writeFileSync(outputFilePath, JSON.stringify(outputJson, null, 2), 'utf8');
       
       console.log(`成功提取信息: 课表名称=${tableName}, 开始日期=${courseStart}, 结束日期=${courseEnd}`);
       console.log(`提取并去重后得到${courses.length}门课程`);
-      console.log(`已生成输出文件: ${outputFilePath}`);
+
+      return outputJson
     } else {
       console.error('未找到必要的字段');
     }
   } catch (error) {
     console.error(`处理文件时出错: ${error.message}`);
   }
-}
-
-// 执行函数
-// 从命令行参数获取源文件和可选的输出文件路径及文件名
-const args = process.argv.slice(2);
-let sourcePath;
-let outputPath = path.join(__dirname, 'courseDataOutput.json');
-
-if (args.length > 0) {
-  sourcePath = args[0];
-  // 如果提供了第二个参数，则使用它作为输出文件路径及文件名
-  if (args.length > 1) {
-    outputPath = args[1];
-  }
-  // 调用函数处理文件
-  extractCourseData(sourcePath, outputPath);
-} else {
-  console.error('错误: 请提供源文件');
-  console.error('用法: node extractCourseData.js <源文件路径> [输出文件路径及文件名]');
-  process.exit(1);
 }
