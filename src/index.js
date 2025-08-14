@@ -122,12 +122,11 @@ function onPick(params) {
   // 更新输入框的值
   if (params !== undefined) {
     ui[0].content.value.text = params;
-    courseData = params; // 将参数赋值给 courseData
+    courseData = params;
     AstroBox.ui.updatePluginSettingsUI(ui);
   } else {
     ui[0].content.value.text = "";
-    courseData = ""; // 将参数赋值给 courseData
-    AstroBox.ui.updatePluginSettingsUI(ui);
+    courseData = "";
     ui[2].content.value = "请先填写配置信息";
     AstroBox.ui.updatePluginSettingsUI(ui);
   }
