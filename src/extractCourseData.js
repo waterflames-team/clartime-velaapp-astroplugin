@@ -109,6 +109,8 @@ function extractCourseData(fileContentInput) {
           const json = JSON.parse(part);
           if (Array.isArray(json) && json.some(item => item.startTime && item.endTime)) {
             timeDataArray = json;
+			console.log('提取到的时间数据:', timeDataArray);
+
             break;
           }
         } catch (e) {
@@ -130,14 +132,35 @@ function extractCourseData(fileContentInput) {
     // 合并课程详细信息和课程名称
     let courses = courseDetailsArray
       .map(detail => {
-        const courseName = courseNameMap.get(detail.id) || '';
+        // 首先尝试通过ID匹配课程名称
+        let courseName = courseNameMap.get(detail.id) || '';
+        
+        // 如果通过ID没有找到课程名称，尝试通过detail.courseName匹配
+        if (!courseName && detail.courseName) {
+          courseName = detail.courseName;
+        }
+        
+        // 如果仍然没有课程名称，则跳过该课程
+        if (!courseName) {
+          return null;
+        }
+        
         return {
           courseName: courseName,
           teacher: detail.teacher || '',
           classroom: detail.room || ''
         };
       })
-      .filter(course => course.courseName);  // 只保留有课程名称的条目
+      .filter(course => course !== null && course.courseName && course.courseName.trim() !== '');  // 只保留有课程名称且非空的条目
+    
+    // 处理教室和教师信息，如果为空则设置为''
+    courses = courses.map(course => {
+      return {
+        ...course,
+        classroom: course.classroom || '',
+        teacher: course.teacher || ''
+      };
+    });
     
     // 去重（当courseName、teacher和classroom均相同时才去重）
     const uniqueCourses = [];
@@ -151,6 +174,8 @@ function extractCourseData(fileContentInput) {
       }
     });
     courses = uniqueCourses;
+	console.log('去重后的课程数据:', courses);
+
     
     
     if (tableName && startDate && maxWeek) {
@@ -353,6 +378,8 @@ function extractCourseData(fileContentInput) {
       console.log(`成功提取信息: 课表名称=${tableName}, 开始日期=${courseStart}, 结束日期=${courseEnd}`);
       console.log(`提取并去重后得到${courses.length}门课程`);
       console.log(outputJson);
+      console.log('完整的输出结果:');
+      console.log(JSON.stringify(outputJson, null, 2));
 
       return outputJson
     } else {
@@ -363,512 +390,17 @@ function extractCourseData(fileContentInput) {
   }
 }
 
-// let inputJson = `[{
-// 	"endTime": "08:50",
-// 	"node": 1,
-// 	"startTime": "08:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "09:50",
-// 	"node": 2,
-// 	"startTime": "09:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "11:00",
-// 	"node": 3,
-// 	"startTime": "10:10",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "12:00",
-// 	"node": 4,
-// 	"startTime": "11:10",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "14:20",
-// 	"node": 5,
-// 	"startTime": "13:30",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "15:20",
-// 	"node": 6,
-// 	"startTime": "14:30",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "16:30",
-// 	"node": 7,
-// 	"startTime": "15:40",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "17:30",
-// 	"node": 8,
-// 	"startTime": "16:40",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "19:20",
-// 	"node": 9,
-// 	"startTime": "18:30",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "20:20",
-// 	"node": 10,
-// 	"startTime": "19:30",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "21:20",
-// 	"node": 11,
-// 	"startTime": "20:30",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "21:30",
-// 	"node": 12,
-// 	"startTime": "21:25",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "21:40",
-// 	"node": 13,
-// 	"startTime": "21:35",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "21:50",
-// 	"node": 14,
-// 	"startTime": "21:45",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "22:00",
-// 	"node": 15,
-// 	"startTime": "21:55",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "22:10",
-// 	"node": 16,
-// 	"startTime": "22:05",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "22:20",
-// 	"node": 17,
-// 	"startTime": "22:15",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "22:30",
-// 	"node": 18,
-// 	"startTime": "22:25",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "22:40",
-// 	"node": 19,
-// 	"startTime": "22:35",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "22:50",
-// 	"node": 20,
-// 	"startTime": "22:45",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:00",
-// 	"node": 21,
-// 	"startTime": "22:55",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:10",
-// 	"node": 22,
-// 	"startTime": "23:05",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:20",
-// 	"node": 23,
-// 	"startTime": "23:15",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:30",
-// 	"node": 24,
-// 	"startTime": "23:25",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:40",
-// 	"node": 25,
-// 	"startTime": "23:35",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:50",
-// 	"node": 26,
-// 	"startTime": "23:45",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:55",
-// 	"node": 27,
-// 	"startTime": "23:51",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "23:59",
-// 	"node": 28,
-// 	"startTime": "23:56",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 29,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 30,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 31,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 32,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 33,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 34,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 35,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 36,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 37,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 38,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 39,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 40,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 41,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 42,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 43,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 44,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 45,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 46,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 47,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 48,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 49,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 50,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 51,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 52,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 53,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 54,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 55,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 56,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 57,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 58,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 59,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// },
-// {
-// 	"endTime": "00:00",
-// 	"node": 60,
-// 	"startTime": "00:00",
-// 	"timeTable": 1
-// }]
+export default extractCourseData
 
 
-// {
-// 	"background": "",
-// 	"courseTextColor": -1,
-// 	"id": 2,
-// 	"itemAlpha": 50,
-// 	"itemHeight": 64,
-// 	"itemTextSize": 12,
-// 	"maxWeek": 20,
-// 	"nodes": 20,
-// 	"showOtherWeekCourse": true,
-// 	"showSat": true,
-// 	"showSun": true,
-// 	"showTime": false,
-// 	"startDate": "2025-8-1",
-// 	"strokeColor": -2130706433,
-// 	"sundayFirst": false,
-// 	"tableName": "测试",
-// 	"textColor": -16777216,
-// 	"timeTable": 1,
-// 	"type": 0,
-// 	"widgetCourseTextColor": -1,
-// 	"widgetItemAlpha": 50,
-// 	"widgetItemHeight": 64,
-// 	"widgetItemTextSize": 12,
-// 	"widgetStrokeColor": -2130706433,
-// 	"widgetTextColor": -16777216
-// }
+let inputJson = `
+{"courseLen":45,"id":1,"name":"默认","sameBreakLen":false,"sameLen":true,"theBreakLen":10}
+[{"endTime":"08:45","node":1,"startTime":"08:00","timeTable":1},{"endTime":"09:40","node":2,"startTime":"08:55","timeTable":1},{"endTime":"10:50","node":3,"startTime":"10:05","timeTable":1},{"endTime":"11:45","node":4,"startTime":"11:00","timeTable":1},{"endTime":"15:15","node":5,"startTime":"14:30","timeTable":1},{"endTime":"16:15","node":6,"startTime":"15:30","timeTable":1},{"endTime":"16:25","node":7,"startTime":"15:40","timeTable":1},{"endTime":"17:25","node":8,"startTime":"16:40","timeTable":1},{"endTime":"19:15","node":9,"startTime":"18:30","timeTable":1},{"endTime":"20:15","node":10,"startTime":"19:30","timeTable":1},{"endTime":"21:15","node":11,"startTime":"20:30","timeTable":1},{"endTime":"22:10","node":12,"startTime":"21:25","timeTable":1},{"endTime":"22:20","node":13,"startTime":"21:35","timeTable":1},{"endTime":"22:30","node":14,"startTime":"21:45","timeTable":1},{"endTime":"22:40","node":15,"startTime":"21:55","timeTable":1},{"endTime":"22:50","node":16,"startTime":"22:05","timeTable":1},{"endTime":"23:00","node":17,"startTime":"22:15","timeTable":1},{"endTime":"23:10","node":18,"startTime":"22:25","timeTable":1},{"endTime":"23:20","node":19,"startTime":"22:35","timeTable":1},{"endTime":"23:30","node":20,"startTime":"22:45","timeTable":1},{"endTime":"23:40","node":21,"startTime":"22:55","timeTable":1},{"endTime":"23:50","node":22,"startTime":"23:05","timeTable":1},{"endTime":"00:00","node":23,"startTime":"23:15","timeTable":1},{"endTime":"00:00","node":24,"startTime":"23:25","timeTable":1},{"endTime":"00:00","node":25,"startTime":"23:35","timeTable":1},{"endTime":"00:00","node":26,"startTime":"23:45","timeTable":1},{"endTime":"00:00","node":27,"startTime":"23:51","timeTable":1},{"endTime":"00:00","node":28,"startTime":"23:56","timeTable":1},{"endTime":"00:45","node":29,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":30,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":31,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":32,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":33,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":34,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":35,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":36,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":37,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":38,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":39,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":40,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":41,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":42,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":43,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":44,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":45,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":46,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":47,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":48,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":49,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":50,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":51,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":52,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":53,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":54,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":55,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":56,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":57,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":58,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":59,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":60,"startTime":"00:00","timeTable":1}]
+{"background":"","courseTextColor":-1,"id":3,"itemAlpha":50,"itemHeight":64,"itemTextSize":12,"maxWeek":1,"nodes":6,"showOtherWeekCourse":true,"showSat":true,"showSun":true,"showTime":false,"startDate":"2025-8-22","strokeColor":-2130706433,"sundayFirst":false,"tableName":"2508 暑假补课","textColor":-16777216,"timeTable":1,"type":0,"widgetCourseTextColor":-1,"widgetItemAlpha":50,"widgetItemHeight":64,"widgetItemTextSize":12,"widgetStrokeColor":-2130706433,"widgetTextColor":-16777216}
+[{"color":"#ff2196f3","courseName":"物理","credit":0.0,"id":0,"note":"","tableId":3},{"color":"#ff2979ff","courseName":"生物","credit":0.0,"id":1,"note":"","tableId":3},{"color":"#ff1de9b6","courseName":"地理","credit":0.0,"id":2,"note":"","tableId":3},{"color":"#ffa375ff","courseName":"语文","credit":0.0,"id":3,"note":"","tableId":3},{"color":"#ffff9100","courseName":"英语","credit":0.0,"id":4,"note":"","tableId":3},{"color":"#ff1de9b6","courseName":"数学","credit":0.0,"id":5,"note":"","tableId":3}]
+[{"day":6,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":5,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0}]
+`;
 
-
-// [{
-// 	"color": "#ff2979ff",
-// 	"courseName": "1",
-// 	"credit": 0.0,
-// 	"id": 0,
-// 	"note": "",
-// 	"tableId": 2
-// },
-// {
-// 	"color": "#ffa375ff",
-// 	"courseName": "2",
-// 	"credit": 0.0,
-// 	"id": 1,
-// 	"note": "",
-// 	"tableId": 2
-// }]
-
-// [{
-// 	"day": 1,
-// 	"endTime": "",
-// 	"endWeek": 20,
-// 	"id": 1,
-// 	"level": 1,
-// 	"ownTime": false,
-// 	"room": "可以啊",
-// 	"startNode": 4,
-// 	"startTime": "",
-// 	"startWeek": 1,
-// 	"step": 1,
-// 	"tableId": 2,
-// 	"teacher": "wc",
-// 	"type": 0
-// },
-// {
-// 	"day": 1,
-// 	"endTime": "",
-// 	"endWeek": 20,
-// 	"id": 1,
-// 	"level": 0,
-// 	"ownTime": false,
-// 	"room": "",
-// 	"startNode": 5,
-// 	"startTime": "",
-// 	"startWeek": 1,
-// 	"step": 1,
-// 	"tableId": 2,
-// 	"teacher": "",
-// 	"type": 0
-// },
-// {
-// 	"day": 2,
-// 	"endTime": "",
-// 	"endWeek": 20,
-// 	"id": 0,
-// 	"level": 0,
-// 	"ownTime": false,
-// 	"room": "",
-// 	"startNode": 1,
-// 	"startTime": "",
-// 	"startWeek": 1,
-// 	"step": 2,
-// 	"tableId": 2,
-// 	"teacher": "",
-// 	"type": 0
-// },
-// {
-// 	"day": 1,
-// 	"endTime": "",
-// 	"endWeek": 20,
-// 	"id": 0,
-// 	"level": 0,
-// 	"ownTime": false,
-// 	"room": "",
-// 	"startNode": 2,
-// 	"startTime": "",
-// 	"startWeek": 1,
-// 	"step": 1,
-// 	"tableId": 2,
-// 	"teacher": "",
-// 	"type": 0
-// },
-// {
-// 	"day": 1,
-// 	"endTime": "",
-// 	"endWeek": 20,
-// 	"id": 0,
-// 	"level": 0,
-// 	"ownTime": false,
-// 	"room": "",
-// 	"startNode": 3,
-// 	"startTime": "",
-// 	"startWeek": 1,
-// 	"step": 1,
-// 	"tableId": 2,
-// 	"teacher": "",
-// 	"type": 0
-// },
-// {
-// 	"day": 2,
-// 	"endTime": "",
-// 	"endWeek": 20,
-// 	"id": 1,
-// 	"level": 0,
-// 	"ownTime": false,
-// 	"room": "",
-// 	"startNode": 3,
-// 	"startTime": "",
-// 	"startWeek": 1,
-// 	"step": 2,
-// 	"tableId": 2,
-// 	"teacher": "",
-// 	"type": 0
-// }]
-// `;
-
-// const result = extractCourseData(inputJson);
-// console.log('完整的输出结果:');
-// console.log(JSON.stringify(result, null, 2));
+const result = extractCourseData(inputJson);
+console.log('完整的输出结果:');
+console.log(JSON.stringify(result, null, 2));

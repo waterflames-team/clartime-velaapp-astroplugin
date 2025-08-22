@@ -1,6 +1,7 @@
 import AstroBox from "astrobox-plugin-sdk";
-import { extractCourseData } from "./extractCourseData.js";
+import extractCourseData from "./extractCourseData.js";
 let courseData
+let excourseData
 let ui
 let file
 
@@ -54,24 +55,6 @@ AstroBox.lifecycle.onLoad(() => {
       }
     },
     {
-      node_id: "OriginalDataUpdate",
-      visibility: true,
-      disabled: false,
-      content: {
-        type: "Button",
-        value: { primary: true, text: "原始数据更新", callback_fun_id: OriginalDataID },
-      },
-    },
-    {
-      node_id: "WakeUpDataUpdate",
-      visibility: true,
-      disabled: false,
-      content: {
-        type: "Button",
-        value: { primary: true, text: "Wakeup数据更新", callback_fun_id: WakeUpDataID },
-      },
-    },
-    {
       node_id: "send",
       visibility: true,
       disabled: false,
@@ -96,7 +79,7 @@ AstroBox.lifecycle.onLoad(() => {
       disabled: false,
       content: {
         type: "Text",
-        value: `注意：请你先在手环上退出澄序课程表，以保证此插件能与应用正常通信`,
+        value: `注意：请你先在手环上退出并重新打开澄序课程表，以保证此插件能与应用正常通信`,
       },
     }
   ];
@@ -105,43 +88,47 @@ AstroBox.lifecycle.onLoad(() => {
 });
 
 function readOriginalData(params) { //原始数据读取
-  console.log("pick in")
+  console.log("原始数据读取 in")
   console.log(params)
   // 更新输入框的值
-  if (params !== undefined) {
-    ui[3].content.value.text = params;
-    courseData = params;
-    AstroBox.ui.updatePluginSettingsUI(ui);
-  } else {
-    ui[3].content.value.text = "";
-    courseData = "";
-    ui[7].content.value = "请先填写配置信息";
-    AstroBox.ui.updatePluginSettingsUI(ui);
+  try {
+    // ui[3].content.value.text = params;
+    courseData = JSON.parse(params);
+
+    // AstroBox.ui.updatePluginSettingsUI(ui);
+    console.log("原始数据非空")
+    console.log(courseData)
+  } catch (error) {
+    console.error(error)
+    ui[5].content.value = error
+    AstroBox.ui.updatePluginSettingsUI(ui)
   }
 }
 
-async function readWakeUpData(params) { //WakeUp数据读取
-  console.log("pick in")
+function readWakeUpData(params) { //WakeUp数据读取
+  console.log("WakeUp数据读取 in")
   console.log(params)
   // 更新输入框的值
-  if (params !== undefined) {
-    courseData = extractCourseData(params);
+  try {
+    excourseData = extractCourseData(params);
     // 等一秒
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-    ui[7].content.value = courseData;
-    AstroBox.ui.updatePluginSettingsUI(ui);
-  } else {
-    ui[1].content.value.text = "";
-    courseData = "";
-    ui[7].content.value = "请先填写配置信息";
-    AstroBox.ui.updatePluginSettingsUI(ui);
+    // new Promise(resolve => setTimeout(resolve, 1000));
+    // ui[3].content.value = excourseData;
+    console.log("WakeUp数据非空,转换结果")
+    console.log(excourseData)
+    courseData = excourseData;
+    // AstroBox.ui.updatePluginSettingsUI(ui);
+  } catch (error) {
+    console.error(error)
+    ui[5].content.value = error
+    AstroBox.ui.updatePluginSettingsUI(ui)
   }
 }
 
 // 数据传输
 async function ICSend() {
-  if (!courseData) {
-    ui[7].content.value = "请先填写配置信息";
+  if (courseData === undefined) {
+    ui[5].content.value = "配置信息未能读取";
     AstroBox.ui.updatePluginSettingsUI(ui);
     return;
   }
@@ -150,20 +137,20 @@ async function ICSend() {
     const appList = await AstroBox.thirdpartyapp.getThirdPartyAppList()
     const app = appList.find(app => app.package_name == "com.waterflames.clartime")
     if (!app) {
-      ui[7].content.value = "请先安装澄序课程表快应用 或 连接设备 或 在手环上重新打开澄序课程表";
+      ui[5].content.value = "请先安装澄序课程表快应用 或 连接设备 或 在手环上重新打开澄序课程表";
       AstroBox.ui.updatePluginSettingsUI(ui);
       return;
     }
 
     await AstroBox.interconnect.sendQAICMessage(
       "com.waterflames.clartime",
-      JSON.stringify(JSON.parse(courseData))
+      JSON.stringify(courseData)
     );
-    ui[7].content.value = "发送成功，如果手环上出现数据加载异常/黑屏，\n大概率是数据问题，请自行检查"
+    ui[5].content.value = "发送成功，如果手环上出现数据加载异常/黑屏，\n大概率是数据问题，请自行检查"
     AstroBox.ui.updatePluginSettingsUI(ui)
   } catch (error) {
     console.error(error)
-    ui[7].content.value = error
+    ui[5].content.value = error
     AstroBox.ui.updatePluginSettingsUI(ui)
   }
 }
