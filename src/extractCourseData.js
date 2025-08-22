@@ -74,7 +74,8 @@ function extractCourseData(fileContentInput) {
               if (json.some(item => item.courseName)) {
                 // 包含courseName的数组
                 coursesInfoArray = json;
-              } else if (json.some(item => item.teacher && item.room)) {
+              } else if (json.some(item => item.teacher !== undefined && item.room !== undefined)) {
+
                 // 包含teacher和room的数组
                 courseDetailsArray = json;
               }
@@ -109,8 +110,6 @@ function extractCourseData(fileContentInput) {
           const json = JSON.parse(part);
           if (Array.isArray(json) && json.some(item => item.startTime && item.endTime)) {
             timeDataArray = json;
-			console.log('提取到的时间数据:', timeDataArray);
-
             break;
           }
         } catch (e) {
@@ -132,35 +131,14 @@ function extractCourseData(fileContentInput) {
     // 合并课程详细信息和课程名称
     let courses = courseDetailsArray
       .map(detail => {
-        // 首先尝试通过ID匹配课程名称
-        let courseName = courseNameMap.get(detail.id) || '';
-        
-        // 如果通过ID没有找到课程名称，尝试通过detail.courseName匹配
-        if (!courseName && detail.courseName) {
-          courseName = detail.courseName;
-        }
-        
-        // 如果仍然没有课程名称，则跳过该课程
-        if (!courseName) {
-          return null;
-        }
-        
+        const courseName = courseNameMap.get(detail.id) || '';
         return {
           courseName: courseName,
           teacher: detail.teacher || '',
           classroom: detail.room || ''
         };
       })
-      .filter(course => course !== null && course.courseName && course.courseName.trim() !== '');  // 只保留有课程名称且非空的条目
-    
-    // 处理教室和教师信息，如果为空则设置为''
-    courses = courses.map(course => {
-      return {
-        ...course,
-        classroom: course.classroom || '',
-        teacher: course.teacher || ''
-      };
-    });
+      .filter(course => course.courseName);  // 只保留有课程名称的条目
     
     // 去重（当courseName、teacher和classroom均相同时才去重）
     const uniqueCourses = [];
@@ -174,8 +152,6 @@ function extractCourseData(fileContentInput) {
       }
     });
     courses = uniqueCourses;
-	console.log('去重后的课程数据:', courses);
-
     
     
     if (tableName && startDate && maxWeek) {
@@ -378,8 +354,6 @@ function extractCourseData(fileContentInput) {
       console.log(`成功提取信息: 课表名称=${tableName}, 开始日期=${courseStart}, 结束日期=${courseEnd}`);
       console.log(`提取并去重后得到${courses.length}门课程`);
       console.log(outputJson);
-      console.log('完整的输出结果:');
-      console.log(JSON.stringify(outputJson, null, 2));
 
       return outputJson
     } else {
