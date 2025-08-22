@@ -1,0 +1,514 @@
+{
+	"courseLen": 50,
+	"id": 1,
+	"name": "默认",
+	"sameBreakLen": false,
+	"sameLen": false,
+	"theBreakLen": 10
+} 
+
+
+[{
+	"endTime": "08:50",
+	"node": 1,
+	"startTime": "08:00",
+	"timeTable": 1
+},
+{
+	"endTime": "09:50",
+	"node": 2,
+	"startTime": "09:00",
+	"timeTable": 1
+},
+{
+	"endTime": "11:00",
+	"node": 3,
+	"startTime": "10:10",
+	"timeTable": 1
+},
+{
+	"endTime": "12:00",
+	"node": 4,
+	"startTime": "11:10",
+	"timeTable": 1
+},
+{
+	"endTime": "14:20",
+	"node": 5,
+	"startTime": "13:30",
+	"timeTable": 1
+},
+{
+	"endTime": "15:20",
+	"node": 6,
+	"startTime": "14:30",
+	"timeTable": 1
+},
+{
+	"endTime": "16:30",
+	"node": 7,
+	"startTime": "15:40",
+	"timeTable": 1
+},
+{
+	"endTime": "17:30",
+	"node": 8,
+	"startTime": "16:40",
+	"timeTable": 1
+},
+{
+	"endTime": "19:20",
+	"node": 9,
+	"startTime": "18:30",
+	"timeTable": 1
+},
+{
+	"endTime": "20:20",
+	"node": 10,
+	"startTime": "19:30",
+	"timeTable": 1
+},
+{
+	"endTime": "21:20",
+	"node": 11,
+	"startTime": "20:30",
+	"timeTable": 1
+},
+{
+	"endTime": "21:30",
+	"node": 12,
+	"startTime": "21:25",
+	"timeTable": 1
+},
+{
+	"endTime": "21:40",
+	"node": 13,
+	"startTime": "21:35",
+	"timeTable": 1
+},
+{
+	"endTime": "21:50",
+	"node": 14,
+	"startTime": "21:45",
+	"timeTable": 1
+},
+{
+	"endTime": "22:00",
+	"node": 15,
+	"startTime": "21:55",
+	"timeTable": 1
+},
+{
+	"endTime": "22:10",
+	"node": 16,
+	"startTime": "22:05",
+	"timeTable": 1
+},
+{
+	"endTime": "22:20",
+	"node": 17,
+	"startTime": "22:15",
+	"timeTable": 1
+},
+{
+	"endTime": "22:30",
+	"node": 18,
+	"startTime": "22:25",
+	"timeTable": 1
+},
+{
+	"endTime": "22:40",
+	"node": 19,
+	"startTime": "22:35",
+	"timeTable": 1
+},
+{
+	"endTime": "22:50",
+	"node": 20,
+	"startTime": "22:45",
+	"timeTable": 1
+},
+{
+	"endTime": "23:00",
+	"node": 21,
+	"startTime": "22:55",
+	"timeTable": 1
+},
+{
+	"endTime": "23:10",
+	"node": 22,
+	"startTime": "23:05",
+	"timeTable": 1
+},
+{
+	"endTime": "23:20",
+	"node": 23,
+	"startTime": "23:15",
+	"timeTable": 1
+},
+{
+	"endTime": "23:30",
+	"node": 24,
+	"startTime": "23:25",
+	"timeTable": 1
+},
+{
+	"endTime": "23:40",
+	"node": 25,
+	"startTime": "23:35",
+	"timeTable": 1
+},
+{
+	"endTime": "23:50",
+	"node": 26,
+	"startTime": "23:45",
+	"timeTable": 1
+},
+{
+	"endTime": "23:55",
+	"node": 27,
+	"startTime": "23:51",
+	"timeTable": 1
+},
+{
+	"endTime": "23:59",
+	"node": 28,
+	"startTime": "23:56",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 29,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 30,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 31,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 32,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 33,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 34,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 35,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 36,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 37,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 38,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 39,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 40,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 41,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 42,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 43,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 44,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 45,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 46,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 47,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 48,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 49,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 50,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 51,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 52,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 53,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 54,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 55,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 56,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 57,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 58,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 59,
+	"startTime": "00:00",
+	"timeTable": 1
+},
+{
+	"endTime": "00:00",
+	"node": 60,
+	"startTime": "00:00",
+	"timeTable": 1
+}]
+
+
+{
+	"background": "",
+	"courseTextColor": -1,
+	"id": 2,
+	"itemAlpha": 50,
+	"itemHeight": 64,
+	"itemTextSize": 12,
+	"maxWeek": 20,
+	"nodes": 20,
+	"showOtherWeekCourse": true,
+	"showSat": true,
+	"showSun": true,
+	"showTime": false,
+	"startDate": "2025-8-1",
+	"strokeColor": -2130706433,
+	"sundayFirst": false,
+	"tableName": "测试",
+	"textColor": -16777216,
+	"timeTable": 1,
+	"type": 0,
+	"widgetCourseTextColor": -1,
+	"widgetItemAlpha": 50,
+	"widgetItemHeight": 64,
+	"widgetItemTextSize": 12,
+	"widgetStrokeColor": -2130706433,
+	"widgetTextColor": -16777216
+}
+
+
+[{
+	"color": "#ff2979ff",
+	"courseName": "1",
+	"credit": 0.0,
+	"id": 0,
+	"note": "",
+	"tableId": 2
+},
+{
+	"color": "#ffa375ff",
+	"courseName": "2",
+	"credit": 0.0,
+	"id": 1,
+	"note": "",
+	"tableId": 2
+}]
+
+[{
+	"day": 1,
+	"endTime": "",
+	"endWeek": 20,
+	"id": 1,
+	"level": 1,
+	"ownTime": false,
+	"room": "可以啊",
+	"startNode": 4,
+	"startTime": "",
+	"startWeek": 1,
+	"step": 1,
+	"tableId": 2,
+	"teacher": "wc",
+	"type": 0
+},
+{
+	"day": 1,
+	"endTime": "",
+	"endWeek": 20,
+	"id": 1,
+	"level": 0,
+	"ownTime": false,
+	"room": "",
+	"startNode": 5,
+	"startTime": "",
+	"startWeek": 1,
+	"step": 1,
+	"tableId": 2,
+	"teacher": "",
+	"type": 0
+},
+{
+	"day": 2,
+	"endTime": "",
+	"endWeek": 20,
+	"id": 0,
+	"level": 0,
+	"ownTime": false,
+	"room": "",
+	"startNode": 1,
+	"startTime": "",
+	"startWeek": 1,
+	"step": 2,
+	"tableId": 2,
+	"teacher": "",
+	"type": 0
+},
+{
+	"day": 1,
+	"endTime": "",
+	"endWeek": 20,
+	"id": 0,
+	"level": 0,
+	"ownTime": false,
+	"room": "",
+	"startNode": 2,
+	"startTime": "",
+	"startWeek": 1,
+	"step": 1,
+	"tableId": 2,
+	"teacher": "",
+	"type": 0
+},
+{
+	"day": 1,
+	"endTime": "",
+	"endWeek": 20,
+	"id": 0,
+	"level": 0,
+	"ownTime": false,
+	"room": "",
+	"startNode": 3,
+	"startTime": "",
+	"startWeek": 1,
+	"step": 1,
+	"tableId": 2,
+	"teacher": "",
+	"type": 0
+},
+{
+	"day": 2,
+	"endTime": "",
+	"endWeek": 20,
+	"id": 1,
+	"level": 0,
+	"ownTime": false,
+	"room": "",
+	"startNode": 3,
+	"startTime": "",
+	"startWeek": 1,
+	"step": 2,
+	"tableId": 2,
+	"teacher": "",
+	"type": 0
+}]

@@ -6,21 +6,70 @@ let file
 
 // UI服务启动
 let ICSendId = AstroBox.native.regNativeFun(ICSend);
-let PickId = AstroBox.native.regNativeFun(onPick);
+let OriginalDataID = AstroBox.native.regNativeFun(readOriginalData);
+let WakeUpDataID = AstroBox.native.regNativeFun(readWakeUpData);
 
 AstroBox.lifecycle.onLoad(() => {
   ui = [
     {
-      node_id: "pickFile",
+      node_id: "title1",
+      visibility: true,
+      disabled: false,
+      content: {
+        type: "Text",
+        value: `WakeUp课程数据：`,
+      },
+    },
+    {
+      node_id: "WakeUpData",
       visibility: true,
       disabled: false,
       content: {
         type: "Input",
         value: {
           text: "",
-          callback_fun_id: PickId,
+          callback_fun_id: WakeUpDataID,
         }
       }
+    },
+    {
+      node_id: "title1",
+      visibility: true,
+      disabled: false,
+      content: {
+        type: "Text",
+        value: `原始课程数据：`,
+      },
+    },
+    {
+      node_id: "OriginalData",
+      visibility: true,
+      disabled: false,
+      content: {
+        type: "Input",
+        value: {
+          text: "",
+          callback_fun_id: OriginalDataID,
+        }
+      }
+    },
+    {
+      node_id: "OriginalDataUpdate",
+      visibility: true,
+      disabled: false,
+      content: {
+        type: "Button",
+        value: { primary: true, text: "原始数据更新", callback_fun_id: OriginalDataID },
+      },
+    },
+    {
+      node_id: "WakeUpDataUpdate",
+      visibility: true,
+      disabled: false,
+      content: {
+        type: "Button",
+        value: { primary: true, text: "Wakeup数据更新", callback_fun_id: WakeUpDataID },
+      },
     },
     {
       node_id: "send",
@@ -55,79 +104,36 @@ AstroBox.lifecycle.onLoad(() => {
   AstroBox.ui.updatePluginSettingsUI(ui)
 });
 
-// /**
-//  * 从文件路径中提取文件名
-//  * @param {string} filePath - 文件路径
-//  * @returns {string} 文件名
-//  */
-// export function getFileName(filePath) {
-//   if (!filePath) return '';
-//   // 统一路径分隔符并获取最后一部分
-//   return filePath.replace(/\\/g, '/').split('/').pop() || '';
-// }
-
-// 文件选择
-// async function onPick() {
-//   console.log("pick in")
-//   try {
-//     if (file?.path) await AstroBox.filesystem.unloadFile(file.path)
-//   } catch (error) {
-//     console.error(error)
-//     ui[2].content.value = error.message
-//     AstroBox.ui.updatePluginSettingsUI(ui)
-//   }
-//   console.log("no pick in")
-
-//   file = await AstroBox.filesystem.pickFile({
-//     decode_text: false,
-//   })
-
-//   console.log("pick done")
-
-//   await new Promise(resolve => setTimeout(resolve, 1000));
-
-//   if (!file.path.endsWith(".json")) {
-//     // ui[2].content.value = "请选择.json文件";
-//     ui[2].content.value = file.path;
-//     console.log("检查文件")
-//     console.log(file.path)
-//     console.log("检测文件done")
-//     AstroBox.ui.updatePluginSettingsUI(ui);
-//     return;
-//   }
-
-//   console.log("检测 过")
-//   console.log("文件：")
-//   console.log(file.path)
-
-//   courseData = await AstroBox.filesystem.readFile(file.path, {
-//     len: file.text_len,
-//     decode_text: false
-//   });
-//   console.log(typeof(courseData))
-//   console.log("读取文件")
-//   console.log(courseData)
-//   ui[2].content.value = `已选择文件 ${getFileName(file.path)}, 现在请你在手环上重新打开澄序课程表，进入数据接收状态`
-//   ui[3].content.value = ``
-//   ui[1].disabled = false
-//   AstroBox.ui.updatePluginSettingsUI(ui)
-// }
-
-/**
- * 处理文件选择事件
- * @param {any} params - 事件参数
- */
-function onPick(params) {
+function readOriginalData(params) { //原始数据读取
   console.log("pick in")
+  console.log(params)
   // 更新输入框的值
   if (params !== undefined) {
-    ui[0].content.value.text = params;
+    ui[3].content.value.text = params;
     courseData = params;
     AstroBox.ui.updatePluginSettingsUI(ui);
   } else {
-    ui[0].content.value.text = "";
+    ui[3].content.value.text = "";
     courseData = "";
-    ui[2].content.value = "请先填写配置信息";
+    ui[7].content.value = "请先填写配置信息";
+    AstroBox.ui.updatePluginSettingsUI(ui);
+  }
+}
+
+async function readWakeUpData(params) { //WakeUp数据读取
+  console.log("pick in")
+  console.log(params)
+  // 更新输入框的值
+  if (params !== undefined) {
+    courseData = extractCourseData(params);
+    // 等一秒
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    ui[7].content.value = courseData;
+    AstroBox.ui.updatePluginSettingsUI(ui);
+  } else {
+    ui[1].content.value.text = "";
+    courseData = "";
+    ui[7].content.value = "请先填写配置信息";
     AstroBox.ui.updatePluginSettingsUI(ui);
   }
 }
@@ -135,7 +141,7 @@ function onPick(params) {
 // 数据传输
 async function ICSend() {
   if (!courseData) {
-    ui[2].content.value = "请先填写配置信息";
+    ui[7].content.value = "请先填写配置信息";
     AstroBox.ui.updatePluginSettingsUI(ui);
     return;
   }
@@ -144,7 +150,7 @@ async function ICSend() {
     const appList = await AstroBox.thirdpartyapp.getThirdPartyAppList()
     const app = appList.find(app => app.package_name == "com.waterflames.clartime")
     if (!app) {
-      ui[2].content.value = "请先安装澄序课程表快应用 或 连接设备 或 在手环上重新打开澄序课程表";
+      ui[7].content.value = "请先安装澄序课程表快应用 或 连接设备 或 在手环上重新打开澄序课程表";
       AstroBox.ui.updatePluginSettingsUI(ui);
       return;
     }
@@ -153,11 +159,11 @@ async function ICSend() {
       "com.waterflames.clartime",
       JSON.stringify(JSON.parse(courseData))
     );
-    ui[2].content.value = "发送成功，如果手环上出现数据加载异常/黑屏，\n大概率是数据问题，请自行检查"
+    ui[7].content.value = "发送成功，如果手环上出现数据加载异常/黑屏，\n大概率是数据问题，请自行检查"
     AstroBox.ui.updatePluginSettingsUI(ui)
   } catch (error) {
     console.error(error)
-    ui[2].content.value = error
+    ui[7].content.value = error
     AstroBox.ui.updatePluginSettingsUI(ui)
   }
 }
