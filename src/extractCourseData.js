@@ -130,6 +130,7 @@ function extractCourseData(fileContentInput) {
       .map(detail => {
         const courseName = courseNameMap.get(detail.id) || '';
         return {
+          id: detail.id,  // 添加ID字段用于排序
           courseName: courseName,
           teacher: detail.teacher || '',
           classroom: detail.room || ''
@@ -148,7 +149,12 @@ function extractCourseData(fileContentInput) {
         uniqueCourses.push(course);
       }
     });
-    courses = uniqueCourses;
+    
+    // 先按ID排序
+    uniqueCourses.sort((a, b) => a.id - b.id);
+    
+    // 移除ID字段
+    courses = uniqueCourses.map(({id, ...rest}) => rest);
     
     
     if (tableName && startDate && maxWeek) {
