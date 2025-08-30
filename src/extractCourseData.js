@@ -1,7 +1,5 @@
 /**
- * 提取课表文件中的信息并生成JSON文件
- * 功能：读取指定课表文件，提取课程表基本数据和课程列表
- * 使用数组逻辑而非正则表达式提取数据
+ * 提取WakeUp课表文件中的信息并生成JSON文件
  */
 
 /**
@@ -75,8 +73,7 @@ function extractCourseData(fileContentInput) {
                 // 包含courseName的数组
                 coursesInfoArray = json;
               } else if (json.some(item => item.teacher !== undefined && item.room !== undefined)) {
-
-                // 包含teacher和room的数组
+                // 包含teacher和room的数组（即使它们为空字符串）
                 courseDetailsArray = json;
               }
             }
@@ -265,6 +262,20 @@ function extractCourseData(fileContentInput) {
           return 0;
         });
         
+        // 当上一个"interval"节点与下一个"course"节点之间的时间差超过一小时时，就把该"interval"节点替换成"rest"节点
+        for (let i = 0; i < timeNodes.length - 1; i++) {
+          // 检查当前节点是否为interval类型，下一个节点是否为course类型
+          if (timeNodes[i].type === 'interval' && timeNodes[i + 1].type === 'course') {
+            // 计算时间差（分钟）
+            const timeDiff = timeNodes[i + 1].time - timeNodes[i].time;
+            // 如果时间差超过60分钟（1小时）
+            if (timeDiff > 60) {
+              // 将interval节点替换为rest节点，时间保持不变
+              timeNodes[i].type = 'rest';
+            }
+          }
+        }
+        
         // 将排序后的节点添加到dayTemplate中
         timeNodes.forEach(node => {
           // 移除用于排序的time属性
@@ -330,9 +341,6 @@ function extractCourseData(fileContentInput) {
           });
         }
       });
-      
-      // 处理没有课程的day（如果需要的话，可以添加额外的逻辑）
-      // 这里暂时不处理，因为用户没有明确要求
 
       // 创建目标JSON对象
       const outputJson = {
@@ -365,16 +373,3 @@ function extractCourseData(fileContentInput) {
 }
 
 export default extractCourseData
-
-
-let inputJson = `
-{"courseLen":45,"id":1,"name":"默认","sameBreakLen":false,"sameLen":true,"theBreakLen":10}
-[{"endTime":"08:45","node":1,"startTime":"08:00","timeTable":1},{"endTime":"09:40","node":2,"startTime":"08:55","timeTable":1},{"endTime":"10:50","node":3,"startTime":"10:05","timeTable":1},{"endTime":"11:45","node":4,"startTime":"11:00","timeTable":1},{"endTime":"15:15","node":5,"startTime":"14:30","timeTable":1},{"endTime":"16:15","node":6,"startTime":"15:30","timeTable":1},{"endTime":"16:25","node":7,"startTime":"15:40","timeTable":1},{"endTime":"17:25","node":8,"startTime":"16:40","timeTable":1},{"endTime":"19:15","node":9,"startTime":"18:30","timeTable":1},{"endTime":"20:15","node":10,"startTime":"19:30","timeTable":1},{"endTime":"21:15","node":11,"startTime":"20:30","timeTable":1},{"endTime":"22:10","node":12,"startTime":"21:25","timeTable":1},{"endTime":"22:20","node":13,"startTime":"21:35","timeTable":1},{"endTime":"22:30","node":14,"startTime":"21:45","timeTable":1},{"endTime":"22:40","node":15,"startTime":"21:55","timeTable":1},{"endTime":"22:50","node":16,"startTime":"22:05","timeTable":1},{"endTime":"23:00","node":17,"startTime":"22:15","timeTable":1},{"endTime":"23:10","node":18,"startTime":"22:25","timeTable":1},{"endTime":"23:20","node":19,"startTime":"22:35","timeTable":1},{"endTime":"23:30","node":20,"startTime":"22:45","timeTable":1},{"endTime":"23:40","node":21,"startTime":"22:55","timeTable":1},{"endTime":"23:50","node":22,"startTime":"23:05","timeTable":1},{"endTime":"00:00","node":23,"startTime":"23:15","timeTable":1},{"endTime":"00:00","node":24,"startTime":"23:25","timeTable":1},{"endTime":"00:00","node":25,"startTime":"23:35","timeTable":1},{"endTime":"00:00","node":26,"startTime":"23:45","timeTable":1},{"endTime":"00:00","node":27,"startTime":"23:51","timeTable":1},{"endTime":"00:00","node":28,"startTime":"23:56","timeTable":1},{"endTime":"00:45","node":29,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":30,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":31,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":32,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":33,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":34,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":35,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":36,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":37,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":38,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":39,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":40,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":41,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":42,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":43,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":44,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":45,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":46,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":47,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":48,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":49,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":50,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":51,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":52,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":53,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":54,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":55,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":56,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":57,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":58,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":59,"startTime":"00:00","timeTable":1},{"endTime":"00:45","node":60,"startTime":"00:00","timeTable":1}]
-{"background":"","courseTextColor":-1,"id":3,"itemAlpha":50,"itemHeight":64,"itemTextSize":12,"maxWeek":1,"nodes":6,"showOtherWeekCourse":true,"showSat":true,"showSun":true,"showTime":false,"startDate":"2025-8-22","strokeColor":-2130706433,"sundayFirst":false,"tableName":"2508 暑假补课","textColor":-16777216,"timeTable":1,"type":0,"widgetCourseTextColor":-1,"widgetItemAlpha":50,"widgetItemHeight":64,"widgetItemTextSize":12,"widgetStrokeColor":-2130706433,"widgetTextColor":-16777216}
-[{"color":"#ff2196f3","courseName":"物理","credit":0.0,"id":0,"note":"","tableId":3},{"color":"#ff2979ff","courseName":"生物","credit":0.0,"id":1,"note":"","tableId":3},{"color":"#ff1de9b6","courseName":"地理","credit":0.0,"id":2,"note":"","tableId":3},{"color":"#ffa375ff","courseName":"语文","credit":0.0,"id":3,"note":"","tableId":3},{"color":"#ffff9100","courseName":"英语","credit":0.0,"id":4,"note":"","tableId":3},{"color":"#ff1de9b6","courseName":"数学","credit":0.0,"id":5,"note":"","tableId":3}]
-[{"day":6,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":0,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":1,"level":0,"ownTime":false,"room":"走班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":6,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":1,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":3,"endTime":"","endWeek":1,"id":2,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":4,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":5,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":5,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":3,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":2,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":4,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":1,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":7,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":2,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0},{"day":5,"endTime":"","endWeek":1,"id":3,"level":0,"ownTime":false,"room":"本班","startNode":6,"startTime":"","startWeek":1,"step":1,"tableId":3,"teacher":"","type":0}]
-`;
-
-const result = extractCourseData(inputJson);
-console.log('完整的输出结果:');
-console.log(JSON.stringify(result, null, 2));
