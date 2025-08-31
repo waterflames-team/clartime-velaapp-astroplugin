@@ -69,7 +69,10 @@ AstroBox.lifecycle.onLoad(() => {
       disabled: false,
       content: {
         type: "Text",
-        value: `请在上方输入框里粘贴json格式数据`,
+        value: `请在上方输入框里粘贴json格式数据，然后点击空白处，耐心等待解析完成，过程中不要做其他操作，完成后此处会有提示`,  
+        style: {
+          color: "red",
+        },
       },
     }
     ,
@@ -79,7 +82,7 @@ AstroBox.lifecycle.onLoad(() => {
       disabled: false,
       content: {
         type: "Text",
-        value: `注意：请你先在手环上退出并重新打开澄序课程表，以保证此插件能与应用正常通信`,
+        value: `注意：1.请你先在手环上退出并重新打开澄序课程表，以保证此插件能与应用正常通信\n2.WakeUp 数据解析有概率发生乱序，在导入后请检查课程信息是否一致，如不一致请尝试重新导入\n3.在填写完数据后不要点击另一个输入框，会导致数据绑定错误`,
       },
     }
   ];
@@ -98,6 +101,8 @@ function readOriginalData(params) { //原始数据读取
     // AstroBox.ui.updatePluginSettingsUI(ui);
     console.log("原始数据非空")
     console.log(courseData)
+    ui[5].content.value = " 原始数据读取完成，可以点击发送了";
+    AstroBox.ui.updatePluginSettingsUI(ui);
   } catch (error) {
     console.error(error)
     ui[5].content.value = error
@@ -106,17 +111,22 @@ function readOriginalData(params) { //原始数据读取
 }
 
 function readWakeUpData(params) { //WakeUp数据读取
+  ui[5].content.value = "WakeUp数据解析中，请稍后，过程中请不要进行任何操作";
+  AstroBox.ui.updatePluginSettingsUI(ui);
   console.log("WakeUp数据读取 in")
   console.log(params)
   // 更新输入框的值
   try {
+    
     excourseData = extractCourseData(params);
     // 等一秒
-    // new Promise(resolve => setTimeout(resolve, 1000));
+    //
     // ui[3].content.value = excourseData;
     console.log("WakeUp数据非空,转换结果")
     console.log(excourseData)
     courseData = excourseData;
+    ui[5].content.value = "WakeUp数据解析完成，可以点击发送了";
+    AstroBox.ui.updatePluginSettingsUI(ui);
     // AstroBox.ui.updatePluginSettingsUI(ui);
   } catch (error) {
     console.error(error)
@@ -146,7 +156,7 @@ async function ICSend() {
       "com.waterflames.clartime",
       JSON.stringify(courseData)
     );
-    ui[5].content.value = "发送成功，如果手环上出现数据加载异常/黑屏，\n大概率是数据问题，请自行检查"
+    ui[5].content.value = "发送成功，如果手环上出现数据加载异常/黑屏，大概率是数据问题，请自行检查；如果手环没有任何反应，请检查是否进入相关传输页面（首次进入会在重启后引导你进入相关页面；如果你完成过应用的向导流程，那你可以在设置页找到相关入口）"
     AstroBox.ui.updatePluginSettingsUI(ui)
   } catch (error) {
     console.error(error)
