@@ -368,6 +368,8 @@ function extractCourseData(fileContentInput) {
       console.log(`成功提取信息: 课表名称=${tableName}, 开始日期=${courseStart}, 结束日期=${courseEnd}`);
       console.log(`提取并去重后得到${courses.length}门课程`);
       console.log(outputJson);
+      console.log('完整的输出结果:');
+      console.log(JSON.stringify(outputJson, null, 2));
 
       return outputJson
     } else {
