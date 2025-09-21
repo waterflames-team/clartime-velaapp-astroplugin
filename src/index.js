@@ -136,8 +136,8 @@ async function ICSend() {
       AstroBox.ui.updatePluginSettingsUI(ui)
       return;
     } catch (parseError) {
-      console.error("课程数据解析失败，json数据格式错误:", parseError);
-      ui[7].content.value = "课程数据格式错误，请检查是否符合json格式/数据是否完整";
+      console.error("课程数据解析或发送失败:", parseError);
+      ui[7].content.value = "发送失败，请检查：1.课程数据是否符合json格式/数据是否完整｜2.连接手环后，传输数据前，是否已经重启应用并进入了相关传输界面";
       AstroBox.ui.updatePluginSettingsUI(ui);
       return;
     }
